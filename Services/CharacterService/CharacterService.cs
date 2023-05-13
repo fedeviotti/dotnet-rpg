@@ -10,12 +10,12 @@ public class CharacterService : ICharacterService
         new Character { Id = 1, Name = "Sam" }
     };
     
-    public List<Character> GetAllCharacters()
+    public async Task<List<Character>> GetAllCharacters()
     {
         return Characters;
     }
 
-    public Character GetCharacterById(int id)
+    public async Task<Character> GetCharacterById(int id)
     {
         var character = Characters.FirstOrDefault(c => c.Id == id);
         if (character == null)
@@ -26,7 +26,7 @@ public class CharacterService : ICharacterService
         return character;
     }
 
-    public List<Character> AddCharacter(Character newCharacter)
+    public async Task<List<Character>> AddCharacter(Character newCharacter)
     {
         Characters.Add(newCharacter);
         return Characters;
