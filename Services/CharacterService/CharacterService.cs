@@ -72,4 +72,27 @@ public class CharacterService : ICharacterService
         
         return serviceResponse;
     }
+
+    public async Task<ServiceResponse<List<GetCharacterDto>>> DeleteCharacter(int id)
+    {
+        var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
+        try
+        {
+            var character = Characters.FirstOrDefault(c => c.Id == id);
+            if (character is null)
+            {
+                throw new Exception($"Character with id '{id}' not found");
+            }
+
+            Characters.Remove(character);
+            serviceResponse.Data = Characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
+        }
+        catch (Exception e)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = e.Message;
+        }
+        
+        return serviceResponse;
+    }
 }
