@@ -28,7 +28,7 @@ public class CharacterService : ICharacterService
         serviceResponse.Data = Characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
         return serviceResponse;
     }
-    
+
     public async Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters()
     {
         var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
@@ -41,6 +41,35 @@ public class CharacterService : ICharacterService
         var serviceResponse = new ServiceResponse<GetCharacterDto>();
         var character = Characters.FirstOrDefault(c => c.Id == id);
         serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
+        return serviceResponse;
+    }
+    
+    public async Task<ServiceResponse<GetCharacterDto>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
+    {
+        var serviceResponse = new ServiceResponse<GetCharacterDto>();
+        try
+        {
+            var character = Characters.FirstOrDefault(c => c.Id == updatedCharacter.Id);
+            if (character is null)
+            {
+                throw new Exception($"Character with id '{updatedCharacter.Id}' not found");
+            }
+        
+            character.Name = updatedCharacter.Name;
+            character.HitPoint = updatedCharacter.HitPoint;
+            character.Strength = updatedCharacter.Strength;
+            character.Defense = updatedCharacter.Defense;
+            character.Intelligence = updatedCharacter.Intelligence;
+            character.Class = updatedCharacter.Class;
+        
+            serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
+        }
+        catch (Exception e)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = e.Message;
+        }
+        
         return serviceResponse;
     }
 }
