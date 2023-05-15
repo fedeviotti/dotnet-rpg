@@ -55,7 +55,7 @@ public class CharacterService : ICharacterService
         var serviceResponse = new ServiceResponse<GetCharacterDto>();
         try
         {
-            var character = Characters.FirstOrDefault(c => c.Id == updatedCharacter.Id);
+            var character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == updatedCharacter.Id);
             if (character is null)
             {
                 throw new Exception($"Character with id '{updatedCharacter.Id}' not found");
@@ -67,7 +67,8 @@ public class CharacterService : ICharacterService
             character.Defense = updatedCharacter.Defense;
             character.Intelligence = updatedCharacter.Intelligence;
             character.Class = updatedCharacter.Class;
-        
+
+            await _context.SaveChangesAsync();
             serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
         }
         catch (Exception e)
