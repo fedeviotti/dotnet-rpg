@@ -11,12 +11,6 @@ public class CharacterService : ICharacterService
     private readonly IMapper _mapper;
     private readonly DataContext _context;
 
-    private static readonly List<Character> Characters = new List<Character>
-    {
-        new Character(),
-        new Character { Id = 1, Name = "Sam" }
-    };
-
     public CharacterService(IMapper mapper, DataContext context)
     {
         _mapper = mapper;
@@ -85,14 +79,16 @@ public class CharacterService : ICharacterService
         var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
         try
         {
-            var character = Characters.FirstOrDefault(c => c.Id == id);
+            var character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == id);
             if (character is null)
             {
                 throw new Exception($"Character with id '{id}' not found");
             }
 
-            Characters.Remove(character);
-            serviceResponse.Data = Characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
+            _context.Characters.Remove(character);
+            await _context.SaveChangesAsync();
+            serviceResponse.Data = 
+                await _context.Characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToListAsync();
         }
         catch (Exception e)
         {
