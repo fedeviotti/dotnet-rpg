@@ -8,6 +8,7 @@ public class DataContext : DbContext
     // expression body definition
     // read more https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/properties#expression-body-definitions
     public DbSet<Character> Characters => Set<Character>();
+    public DbSet<User> Users => Set<User>();
     
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
