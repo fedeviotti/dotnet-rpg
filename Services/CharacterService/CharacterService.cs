@@ -26,18 +26,21 @@ public class CharacterService : ICharacterService
     {
         var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
         var character = _mapper.Map<Character>(newCharacter);
+        character.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
+        
         _context.Characters.Add(character);
         await _context.SaveChangesAsync();
-        serviceResponse.Data = await _context.Characters.Select(
-            c => _mapper.Map<GetCharacterDto>(c)).ToListAsync();
+        serviceResponse.Data = await _context.Characters
+            .Where(c => c.User!.Id == GetUserId())
+            .Select(c => _mapper.Map<GetCharacterDto>(c))
+            .ToListAsync();
         return serviceResponse;
     }
 
     public async Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters()
     {
         var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
-        var userId = GetUserId();
-        var dbCharacters = await _context.Characters.Where(c => c.User!.Id == userId).ToListAsync();
+        var dbCharacters = await _context.Characters.Where(c => c.User!.Id == GetUserId()).ToListAsync();
         serviceResponse.Data = dbCharacters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
         return serviceResponse;
     }
